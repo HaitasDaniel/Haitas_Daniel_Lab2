@@ -1,4 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("Haitas_Daniel_Lab2Context") ?? throw new InvalidOperationException("Connection string 'Haitas_Daniel_Lab2Context' not found.");
+
+builder.Services.AddDbContext<Haitas_Daniel_Lab2Context>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
