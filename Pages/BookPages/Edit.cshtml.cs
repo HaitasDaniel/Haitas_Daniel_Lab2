@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Haitas_Daniel_Lab2.Models;
 
@@ -30,6 +31,7 @@ public class EditModel : PageModel
             return NotFound();
         }
         Book = book;
+        PopulateLists();
         return Page();
     }
 
@@ -39,6 +41,7 @@ public class EditModel : PageModel
     {
         if (!ModelState.IsValid)
         {
+            PopulateLists();
             return Page();
         }
 
@@ -66,5 +69,14 @@ public class EditModel : PageModel
     private bool BookExists(int id)
     {
         return _context.Book.Any(e => e.ID == id);
+    }
+
+    // umple listele derulante (dropdown) cu edituri si autori
+    private void PopulateLists()
+    {
+        ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
+        ViewData["AuthorID"] = new SelectList(
+            _context.Set<Author>().Select(a => new { a.ID, FullName = a.FirstName + " " + a.LastName }),
+            "ID", "FullName");
     }
 }

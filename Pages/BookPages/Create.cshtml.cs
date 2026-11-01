@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Haitas_Daniel_Lab2.Models;
 
@@ -16,6 +17,7 @@ public class CreateModel : PageModel
 
     public IActionResult OnGet()
     {
+        PopulateLists();
         return Page();
     }
 
@@ -27,6 +29,7 @@ public class CreateModel : PageModel
     {
         if (!ModelState.IsValid)
         {
+            PopulateLists();
             return Page();
         }
 
@@ -34,5 +37,14 @@ public class CreateModel : PageModel
         await _context.SaveChangesAsync();
 
         return RedirectToPage("./Index");
+    }
+
+    // umple listele derulante (dropdown) cu edituri si autori
+    private void PopulateLists()
+    {
+        ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
+        ViewData["AuthorID"] = new SelectList(
+            _context.Set<Author>().Select(a => new { a.ID, FullName = a.FirstName + " " + a.LastName }),
+            "ID", "FullName");
     }
 }
